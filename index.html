@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Organização de preço</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main>
+      <header id="title">
+        <span id="icon-title" class="material-symbols-outlined"> group </span>
+        <h1>Distribuição de Custos</h1>
+      </header> 
+      <!-- entra de valor pessoa contribuinte -->
+      <section>
+        <!-- título -->
+        <!-- campo de entrada pessoa -->
+        <form method="get">
+          <label for="person-input">Adicionar membro</label>
+          <!-- minhas entradas -->
+          <div class="field input-field">
+            <!-- entrada de nome -->
+            <input
+              type="text"
+              name="person"
+              id="person-input"
+              required
+              autocomplete="name"
+              placeholder="Nome do membro"
+            />
+            <!-- botão -->
+            <button type="submit" id="add-person">
+              <span class="material-symbols-outlined"> add </span>
+              Adicionar
+            </button>
+          </div>
+          <!-- campo de entrada valor -->
+          <label for="value-input">Valor Total</label>
+          <!-- entrada   -->
+          <div class="field value-field">
+            <span id="icon-value" class="material-symbols-outlined">
+              attach_money
+            </span>
+            <!-- entrada de valor -->
+            <input
+              type="number"
+              name="value"
+              id="value-input"
+              autocomplete="name"
+              placeholder="0.00"
+            />
+          </div>
+        </form>
+      </section>
+      <!-- membros e calculo por pessoa -->
+      <section class="member-field">
+        <!-- quando não há membros -->
+        <h2 id="member-count">Membros (0)</h2>
+        <div id="non-person">
+          <span class="material-symbols-outlined" id="icon-non-person">
+            group
+          </span>
+          <p>Nenhum membro adicionado ainda.</p>
+        </div>
+        <!-- quando há membros -->
+        <div id="with-person"></div>
+      </section>
+      <section class="section-info">
+        <h3>Resumo</h3>
+        <div class="table-info">
+          <div>
+            <p>Total Membros</p>
+            <p id="summary-members">0</p>
+          </div>
+          <div>
+            <p>Valor Total</p>
+            <p id="summary-total">0.00</p>
+          </div>
+          <div>
+            <p>Total de Porcentagem</p>
+            <p id="summary-percent">100.00%</p>
+          </div>
+          <div>
+            <p>Status</p>
+            <p id="summary-status">Distribuição completa</p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="assets/script/script.js"></script>
+  </body>
+</html>
