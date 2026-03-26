@@ -1,4 +1,8 @@
-let contNumMember = 0;
+
+let appState = {
+  members: JSON.parse(localStorage.getItem("members")) || [],
+  total: Number(localStorage.getItem("total")) || 0
+}
 
 // parte 1
 
@@ -25,109 +29,45 @@ forms.addEventListener("submit", (e) => {
   elementVerify();
 });
 
-const createPerson = () => {
-  contNumMember++;
+const createPerson = (memberData = null) => {
+  const personName = memberData ? memberData.name : inputPerson.value;
 
-  const name = document.createElement("p");
-  name.classList.add("set-name");
-  name.innerText = inputPerson.value;
+  const newMember = memberData || {
+    id: Date.now(),
+    name: inputPerson.value,
+    percentage: 0,
+  };
 
-  const value = document.createElement("p");
-  value.classList.add("set-value");
-  value.innerText = "R$ 0.00";
+  if (!memberData) {
+    appState.members.push(newMember);
+    saveMembers();
 
-  const section = document.createElement("section");
-  section.classList.add("container");
-  section.appendChild(name);
-  section.appendChild(value);
-
-  const perInput = document.createElement("input");
-  perInput.classList.add("per-input");
-  perInput.name = "percentage";
-  perInput.type = "number";
-  perInput.step = "any";
-  perInput.placeholder = "0";
-  perInput.min = "0";
-  perInput.max = "100";
-
-  const rest = RestCal();
-
-  if (rest > 0) {
-    perInput.value = rest;
-    if (valueInput.value > 0)
-      valueInput.innerText = `R$ ${rest * (valueInput.value / 100).toFixed(2)}`;
+    renderAll();
   }
 
-  const perIcon = document.createElement("span");
-  perIcon.classList.add("per-icon");
-  perIcon.classList.add("material-symbols-outlined");
-  perIcon.innerText = "percent";
-
-  const divInput = document.createElement("div");
-  divInput.classList.add("div-input");
-  divInput.appendChild(perInput);
-  divInput.appendChild(perIcon);
-
-  const delIcon = document.createElement("span");
-  delIcon.classList.add("del-icon");
-  delIcon.classList.add("material-symbols-outlined");
-  delIcon.innerText = "delete";
-
-  const btnDel = document.createElement("button");
-  btnDel.classList.add("erase");
-  btnDel.appendChild(delIcon);
-
-  const nodeP = document.createElement("section");
-  nodeP.classList.add("member");
-  nodeP.appendChild(section);
-  nodeP.appendChild(divInput);
-  nodeP.appendChild(btnDel);
-  inputPerson.value = "";
-  withPerson.appendChild(nodeP);
-
-  name.addEventListener("click", () => {
-    const newName = prompt("novo nome: ");
-    name.innerText = newName;
-  });
-
-  perInput.addEventListener("input", () => {
-    if (valueInput.value > 0) {
-      const result = Number(perInput.value) * (valueInput.value / 100);
-      value.innerText = `R$ ${result.toFixed(2)} `;
-    } else {
-      value.innerText = "-";
-    }
-    updateSummary();
-  });
-  contMember.innerText = `Membros (${contNumMember})`;
+  contMember.innerText = `Membros (${appState.members.length})`;
   updateSummary();
 };
 
 withPerson.addEventListener("click", (e) => {
   if (e.target.closest(".erase")) {
     const btn = e.target.closest(".erase");
-    const member = btn.closest(".member");
-    contNumMember--;
-    member.remove();
+    const memberElement = btn.closest(".member");
+    const id = Number(memberElement.dataset.id);
+
+    appState.members= appState.members.filter((m) => m.id !== id);
+    saveMembers();
+    memberElement.remove();
     elementVerify();
-    contMember.innerText = `Membros (${contNumMember})`;
+    contMember.innerText = `Membros (${appState.members.length})`;
     updateSummary();
   }
 });
 
 valueInput.addEventListener("input", () => {
-  const queryperInput = document.querySelectorAll(".per-input");
-  queryperInput.forEach((inp) => {
-    const member = inp.closest(".member");
-    const value = member.querySelector(".set-value");
-    if (valueInput.value > 0) {
-      const result = Number(inp.value) * (valueInput.value / 100);
-      value.innerText = `R$ ${result.toFixed(2)} `;
-    } else {
-      value.innerText = "-";
-    }
-    updateSummary();
-  });
+  appState.total = Number(valueInput.value) || 0;  
+  saveMembers();
+  renderAll();
 });
 
 const elementVerify = () => {
@@ -139,18 +79,16 @@ const elementVerify = () => {
 };
 
 const updateSummary = () => {
-  const allPerInput = document.querySelectorAll(".per-input");
-
-  const totPercentage = [...allPerInput].reduce((val, ind) => {
-    return val + Number(ind.value);
+  const totPercentage = appState.members.reduce((val, ind) => {
+    return val + Number(ind.percentage || 0);
   }, 0);
 
-  const totValue = Number(valueInput.value) || 0;
+  const totValue = Number(appState.total) || 0;
 
-  summaryMembers.innerText = contNumMember;
+  summaryMembers.innerText = appState.members.length;
   summaryTotal.innerText = `R$ ${totValue.toFixed(2)}`;
   summaryPercent.innerText = totPercentage.toFixed(2) + " %";
-  if (contNumMember === 0) {
+  if (appState.members.length === 0) {
     sectionInfo.style.display = "none";
   } else {
     sectionInfo.style.display = "flex";
@@ -176,10 +114,113 @@ const updateSummary = () => {
   }
 };
 
-const RestCal = () => {
-  const allPerInput = document.querySelectorAll(".per-input");
-  const totValue = [...allPerInput].reduce((val, ind) => {
-    return val + Number(ind.value);
+const RestCal = (total, percent) => {
+  const totValue = appState.members.reduce((val, ind) => {
+    return val + Number(ind.percentage || 0);
   }, 0);
   return Math.max(0, 100 - totValue);
 };
+
+const saveMembers = () => {
+  localStorage.setItem("members", JSON.stringify(appState.members));
+  localStorage.setItem("total", appState.total);
+};
+
+const addMembers = (name, percentage) => {
+  const member = { id: Date.now(), name, percentage };
+  members.push(member);
+};
+
+const removeMember = (id) => {
+ appState.members= members.filter((m) => m.id !== id);
+  saveMembers();
+};
+
+const renderAll = () => {
+  withPerson.innerHTML = "";
+
+  appState.members.forEach((member) => {
+    const { nodeP, perInput, name, value } = renderMember(member);
+
+    const rest = RestCal();
+
+    if (!member.percentage && rest > 0) {
+      perInput.value = rest;
+      member.percentage = rest;
+    }
+    if(appState.total > 0){
+      const result = CalValue(member.percentage, appState.total);
+      value.innerText = `R$ ${result.toFixed(2)}`
+    }
+    
+
+    name.addEventListener("click", () => {
+      const newName = prompt("novo nome: ") || member.name;
+      member.name = newName;
+      saveMembers();
+      renderAll();
+    });
+
+    perInput.value = member.percentage;
+
+    perInput.addEventListener("input", () => {
+      member.percentage = Number(perInput.value);
+      saveMembers();
+      updateSummary();
+    });
+  });
+
+  contMember.innerHTML = `Membros (${appState.members.length})`;
+  elementVerify();
+  updateSummary();
+};
+
+const renderMember = (member) => {
+  const name = createEl("p", "set-name", member.name);
+  const value = createEl("p", "set-value", "R$ 0.00");
+
+  const section = createEl("section", "container");
+  section.append(name, value);
+
+  const perInput = createEl("input", "per-input");
+  perInput.type = "number";
+  perInput.min = "0";
+  perInput.max = "100";
+
+  const perIcon = createEl("span", "per-icon", "percent");
+  perIcon.classList.add("material-symbols-outlined");
+
+  const divInput = createEl("div", "div-input");
+  divInput.append(perInput, perIcon);
+
+  const delIcon = createEl("span", "del-icon", "delete");
+  delIcon.classList.add("material-symbols-outlined");
+
+  const btnDel = createEl("button", "erase");
+  btnDel.appendChild(delIcon);
+
+  const nodeP = createEl("section", "member");
+  nodeP.append(section, divInput, btnDel);
+  withPerson.appendChild(nodeP);
+  nodeP.dataset.id = member.id;
+
+  return { nodeP, perInput, name, value };
+};
+
+const createEl = (tag, className, text = "") => {
+  const el = document.createElement(tag);
+  if (className) el.classList.add(className);
+  el.innerText = text;
+  return el;
+};
+
+const CalValue = (percent, value) => {
+  return percent * (value/100);
+
+}
+
+
+valueInput.value = appState.total;
+
+elementVerify();
+renderAll();
