@@ -1,0 +1,34 @@
+@charset "UTF-08";
+
+div.input-field{
+    flex-flow: column wrap;
+}
+
+
+input#person-input{
+    justify-self: auto;
+}
+
+#add-person{
+    justify-content: center;
+}
+
+#summary-total{
+    font: normal 700 1.2em var(--var-fonte-padrão);
+}
+#summary-members{
+  font: normal 700 1.2em var(--var-fonte-padrão);
+}
+
+#summary-total{
+  font: normal 700 1.2em var(--var-fonte-padrão);
+}
+
+#summary-percent{
+  font: normal 700 1.2em var(--var-fonte-padrão);
+}
+
+#summary-status{
+  font: normal 400 0.9em var(--var-fonte-padrão);
+
+}

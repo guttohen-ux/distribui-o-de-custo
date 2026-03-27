@@ -66,14 +66,17 @@ label {
 
 input {
   border: 1px solid grey;
-  flex-grow: 4;
-  flex-shrink: 1;
+  flex:  4 1 auto;
   padding: 12px 16px;
   border-radius: 10px;
   font-weight: 400;
   height: 52px;
-  width: 85px;
   outline: none;
+  margin-bottom: 10px;
+}
+
+h3{
+  color: rgb(31, 31, 31);
   margin-bottom: 10px;
 }
 
@@ -95,7 +98,7 @@ input {
 .member {
   display: flex;
   flex-flow: row nowrap;
-  align-items: center;
+  align-content: stretch;
   gap: 12px;
   margin-bottom: 12px;
 }
@@ -207,6 +210,7 @@ div.table-info > div > p{
   border: none;
   padding: 12px 24px;
   border-radius: 10px;
+  margin-bottom: 10px;
 }
 
 #add-person:hover {
